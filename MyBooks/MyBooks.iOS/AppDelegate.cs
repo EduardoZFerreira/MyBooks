@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Foundation;
@@ -22,8 +23,11 @@ namespace MyBooks.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            string fileName = "books_db.sqlite";
+            string fileLocation = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "..", "Library");
+            string fullPath = Path.Combine(fileLocation, fileName);
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
+            LoadApplication(new App(fullPath));
 
             return base.FinishedLaunching(app, options);
         }

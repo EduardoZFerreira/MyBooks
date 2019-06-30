@@ -6,8 +6,8 @@
              mc:Ignorable="d"
              x:Class="MyBooks.NewBookPage">
     <StackLayout Margin="10, 10, 10, 0">
-        <Entry Placeholder="Book name" />
-        <Entry Placeholder="Author" />
+        <Entry x:Name="nameEntry" Placeholder="Book name" />
+        <Entry x:Name="authorEntry" Placeholder="Author" />
         <Button Text="Save" Clicked="Button_Clicked" />
     </StackLayout>
 </ContentPage>

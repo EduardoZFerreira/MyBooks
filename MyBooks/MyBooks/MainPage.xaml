@@ -9,5 +9,11 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="+" Activated="ToolbarItem_Activated" />
     </ContentPage.ToolbarItems>
-
+    <ListView x:Name="BooksListView">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextCell Text="{Binding Name}" Detail="{Binding Author}" />
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </ContentPage>

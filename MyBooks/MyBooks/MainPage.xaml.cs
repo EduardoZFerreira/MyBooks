@@ -18,6 +18,19 @@ namespace MyBooks
             InitializeComponent();
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            using(SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
+            {
+                conn.CreateTable<Book>();
+                List<Book> books = conn.Table<Book>().ToList();
+                BooksListView.ItemsSource = books;
+            }
+
+        }
+
         private void ToolbarItem_Activated(object sender, EventArgs e)
         {
             Navigation.PushAsync(new NewBookPage());
