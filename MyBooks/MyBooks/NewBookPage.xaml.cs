@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -49,8 +44,9 @@ namespace MyBooks
                 using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
                 {
                     conn.CreateTable<Book>();
+                    string msg = Book.Id > 0 ? "updated" : "created";
                     int rowNumber = Book.Id > 0 ? conn.Update(Book) : conn.Insert(Book);
-                    DisplayAlert("Book " + (Book.Id > 0 ? "updated" : "created") + "!", "", "Ok");
+                    DisplayAlert("Book " + msg + "!", "", "Ok");
                     Navigation.PushAsync(new MainPage());
                 }
             }

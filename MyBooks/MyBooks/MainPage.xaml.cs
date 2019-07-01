@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MyBooks
@@ -13,7 +10,7 @@ namespace MyBooks
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        private List<Book> Books = new List<Book>();
+        private ObservableCollection<Book> Books;
         public MainPage()
         {
             InitializeComponent();
@@ -26,7 +23,7 @@ namespace MyBooks
             using(SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
             {
                 conn.CreateTable<Book>();
-                Books = conn.Table<Book>().ToList();
+                Books = new ObservableCollection<Book>(conn.Table<Book>());
                 BooksListView.ItemsSource = Books;
             }
 
@@ -41,10 +38,22 @@ namespace MyBooks
         {
             Book selectedBook = Books[e.SelectedItemIndex];
             string action = await DisplayActionSheet("Edit book: " + selectedBook.Name, "Cancel", null, "Delete", "Edit info");
-            if(action == "Edit info")
-            {
+            if (action == "Edit info")
                 Navigation.PushAsync(new NewBookPage(selectedBook));
+            else if (action == "Delete")
+                DeleteBook(selectedBook);
+        }
+
+        private void DeleteBook(Book book)
+        {
+            using(SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
+            {
+                conn.CreateTable<Book>();
+                int rows = conn.Delete(book);
+                Books.Remove(book);
+                DisplayAlert("Book deleted!", "Book " + book.Name + " has been deleted!", "Ok");
             }
         }
+
     }
 }
