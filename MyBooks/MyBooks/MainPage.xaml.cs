@@ -13,6 +13,7 @@ namespace MyBooks
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
+        private List<Book> Books = new List<Book>();
         public MainPage()
         {
             InitializeComponent();
@@ -25,8 +26,8 @@ namespace MyBooks
             using(SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
             {
                 conn.CreateTable<Book>();
-                List<Book> books = conn.Table<Book>().ToList();
-                BooksListView.ItemsSource = books;
+                Books = conn.Table<Book>().ToList();
+                BooksListView.ItemsSource = Books;
             }
 
         }
@@ -34,6 +35,16 @@ namespace MyBooks
         private void ToolbarItem_Activated(object sender, EventArgs e)
         {
             Navigation.PushAsync(new NewBookPage());
+        }
+
+        private async void BooksListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            Book selectedBook = Books[e.SelectedItemIndex];
+            string action = await DisplayActionSheet("Edit book: " + selectedBook.Name, "Cancel", null, "Delete", "Edit info");
+            if(action == "Edit info")
+            {
+                Navigation.PushAsync(new NewBookPage(selectedBook));
+            }
         }
     }
 }

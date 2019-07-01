@@ -12,27 +12,53 @@ namespace MyBooks
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewBookPage : ContentPage
     {
+        private Book Book = new Book();
         public NewBookPage()
         {
             InitializeComponent();
         }
 
+        public NewBookPage(Book book)
+        {
+            InitializeComponent();
+            SetBook(book);
+            SetFieldsForEdit();            
+        }
+
+        private void SetFieldsForEdit()
+        {
+            nameEntry.Text = Book.Name;
+            authorEntry.Text = Book.Author;
+        }
+
+        private void SetBook(Book book)
+        {
+            Book = book;
+        }
+
         private void Button_Clicked(object sender, EventArgs e)
         {
-            Book book = new Book()
-            {
-                Name = nameEntry.Text,
-                Author = authorEntry.Text
-            };
+            SetBook(new Book() { Id = Book.Id, Name  = nameEntry.Text,  Author = authorEntry.Text });
+            Save();
+        }
 
-            using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
+        private void Save()
+        {
+            try
             {
-                conn.CreateTable<Book>();
-                int rowNumber = conn.Insert(book);
-                string msg = rowNumber > 0 ? "Book created!" : "Something went wrong";
-                string title = rowNumber > 0 ? "Success!" : "Failure!";
-                DisplayAlert(title, msg, "Ok");
+                using (SQLite.SQLiteConnection conn = new SQLite.SQLiteConnection(App.DB_PATH))
+                {
+                    conn.CreateTable<Book>();
+                    int rowNumber = Book.Id > 0 ? conn.Update(Book) : conn.Insert(Book);
+                    DisplayAlert("Book " + (Book.Id > 0 ? "updated" : "created") + "!", "", "Ok");
+                    Navigation.PushAsync(new MainPage());
+                }
+            }
+            catch(Exception e)
+            {
+                DisplayAlert("There was an error: " + e.Message, "ERROR", "Ok");
             }
         }
+
     }
 }
